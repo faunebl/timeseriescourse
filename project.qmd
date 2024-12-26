@@ -1,0 +1,210 @@
+---
+title: "Applied Time Series Assigment"
+format:
+  pdf:
+    code-annotations: true
+    documentclass: article
+    colorlinks: true
+    classoption: a4paper
+    geometry: margin=1in
+    keep-tex: true
+    toc: true
+    toc-depth: 4
+    number-sections: true
+css: |
+  p {
+    text-align: justify;
+  }
+jupyter:
+  kernelspec: 
+    name: python3
+    language: python
+    display_name: python3
+---
+
+## Theoretical Exercises
+
+### Exercise 1: *The IMA(1,1) Model*
+
+**1)** Let's find the permanent component and the transitory component of an IMA(1,1) process:
+
+$$
+\Delta y_t = \varepsilon_t + \theta \varepsilon_{t-1}
+$$
+
+Expanding:
+
+```{=tex}
+\begin{align*}
+y_t - y_{t-1} & = \varepsilon_t + \theta \varepsilon_{t-1} \\
+(1 - L)y_t & = (1 + \theta L) \varepsilon_t
+\end{align*}
+```
+If we define $\Theta(L) = 1 + \theta L$, we have, based on the decomposition proposed by Beveridge and Nelson:
+
+$$
+y_t = \Theta(1)(1 - L)^{-1} \varepsilon_t + [\Theta(L) - \Theta(1)](1 - L)^{-1}\varepsilon_t
+$$
+
+With $\Theta(1) = 1 + \theta$, we expand:
+
+```{=tex}
+\begin{align*}
+y_t & = (1 + \theta)(1 - L)^{-1} \varepsilon_t + (1 + \theta L - 1 - \theta)(1 - L)^{-1}\varepsilon_t \\    
+& = (1 + \theta)(1 - L)^{-1} \varepsilon_t - \theta \varepsilon_t
+\end{align*}
+```
+By identification, we obtain that:
+
+```{=tex}
+\begin{itemize}
+    \item $(1 + \theta)(1 - L)^{-1} \varepsilon_t$: \textbf{Permanent Component}    
+    \item $\theta \varepsilon_t$: \textbf{Transitory Component}
+\end{itemize}
+```
+### Exercise 2: *The trend stationary model*
+
+Let’s consider the trend stationary model $Y_t = \alpha + \beta t + \varepsilon_t$ with $\varepsilon_t \sim \mathcal{N}(0, \sigma^2)$.
+
+**1)** Let’s compute the variance of $Y_t$:
+
+```{=tex}
+\begin{align*}
+V(Y_t) & = E(Y_t^2) - E(Y_t)^2 \\
+       & = E((\alpha + \beta t + \varepsilon_t)^2) - (\alpha + \beta t)^2 \\
+       & = \alpha^2 + \beta^2 t^2 + \sigma^2 + 2 \alpha \beta t + 2 \alpha E(\varepsilon_t) + 2 \beta t E(\varepsilon_t) - \alpha^2 - \beta^2 t^2 - 2 \alpha \beta t \\
+       & = \sigma^2.
+\end{align*}
+```
+Therefore, the variance of $Y_t$ is time invariant.
+
+Let’s show that the effect of $\varepsilon_t$ on $Y_t$ dissipates asymptotically.
+
+By the Bienaymé-Tchebychev inequality, we have:
+
+```{=tex}
+\begin{align*}
+P\left(\left| \varepsilon_t \right|  > (\alpha + \beta t) / \sqrt(t) \right) & \leq \frac{\sigma^2 t}{(\alpha + \beta t)^2}.
+\end{align*}
+```
+and
+
+```{=tex}
+\begin{align*}
+P\left(\frac{\varepsilon_t}{\alpha + \beta t} > 1/\sqrt{t} \right) & \leq \frac{\sigma^2 t}{(\alpha + \beta t)^2} \\
+\end{align*}
+```
+Therefore:
+
+$$
+P\left(\left|\frac{\varepsilon_t}{\alpha + \beta t}\right| > 0\right) \to 0 \quad \text{as } t \to \infty.
+$$
+
+Thus, the effect of $\varepsilon_t$ on $Y_t$ dissipates asymptotically.
+
+**2)** Let’s compute the variance of the forecast error:
+
+```{=tex}
+\begin{align*}
+V(Y_{t+h} - E[Y_{t+h} | It]) & = V(\alpha + \beta(t+h) + \varepsilon_{t+h} - E[\alpha + \beta(t+h) + \varepsilon_{t+h} | It]) \\
+                        & = V(\varepsilon_{t+h} - E[\varepsilon_{t+h} | It]) \\
+                        & = V(\varepsilon_{t+h}) \\
+                        & = \sigma^2.
+\end{align*}
+```
+So the variance is constant.
+
+**3)** Let's differentiate the data:
+
+```{=tex}
+\begin{align*}
+Y_{t+1} - Y_t & = \alpha + \beta(t+1) + \varepsilon_{t+1} - (\alpha + \beta t + \varepsilon_t) \\
+              & = \beta + \varepsilon_{t+1} - \varepsilon_t.
+\end{align*}
+```
+The trend has been removed. The characteristic polynomial is $1 - z = 0$. So we have $z = 1 \in \{-1, 1\}$.
+
+Therefore, there is a moving average unit root.
+
+### Exercise 3: *The MA(2) Model*
+
+Consider the process $Y_t \sim MA(2)$, $Y_t = \varepsilon_t - \theta_1 \varepsilon_{t-1} - \theta_2 \varepsilon_{t-2}$, where $\varepsilon_t \sim WN(0, \sigma^2)$.
+
+**1)** Let’s compute the mean of $Y_t$:
+
+```{=tex}
+\begin{align*}
+E[Y_t] & = E[\varepsilon_t - \theta_1 \varepsilon_{t-1} - \theta_2 \varepsilon_{t-2}] \\
+       & = 0.
+\end{align*}
+```
+Let’s compute the variance of $Y_t$:
+
+```{=tex}
+\begin{align*}
+V(Y_t) & = E(Y_t^2) - [E(Y_t)]^2 \\
+       & = E(\varepsilon_t^2) + \theta_1^2 E(\varepsilon_{t-1}^2) + \theta_2^2 E(\varepsilon_{t-2}^2) + E[\text{cross terms}] - 0 \\
+       & = \sigma^2 + \theta_1^2 \sigma^2 + \theta_2^2 \sigma^2 \\
+       & = \sigma^2(1 + \theta_1^2 + \theta_2^2).
+\end{align*}
+```
+**2)** Let’s compute the autocorrelation function for this process:
+
+```{=tex}
+\begin{align*}
+\gamma_0 & = V(Y_t) = \sigma^2(1 + \theta_1^2 + \theta_2^2),
+\\
+\gamma_1 & = \text{Cov}(Y_{t+1}, Y_t) \\
+         & = \text{Cov}(\varepsilon_{t+1} - \theta_1 \varepsilon_t - \theta_2 \varepsilon_{t-1}, \varepsilon_t - \theta_1 \varepsilon_{t-1} - \theta_2 \varepsilon_{t-2}) \\
+         & = -\theta_1 \sigma^2 + \theta_1 \theta_2 \sigma^2,
+\\
+\gamma_2 & = \text{Cov}(Y_{t+2}, Y_t) \\
+         & = \text{Cov}(\varepsilon_{t+2} - \theta_1 \varepsilon_{t+1} - \theta_2 \varepsilon_t, \varepsilon_t - \theta_1 \varepsilon_{t-1} - \theta_2 \varepsilon_{t-2}) \\
+         & = -\theta_2 \sigma^2,
+\\         
+\gamma_k & = 0 \quad \text{for } k \geq 3.
+\end{align*}
+```
+So we have: $$
+\tau_k = \begin{cases}
+\frac{\gamma_1}{\sigma^2(1 + \theta_1^2 + \theta_2^2)}, & \text{if } k = 1, \\
+\frac{\gamma_2}{\sigma^2(1 + \theta_1^2 + \theta_2^2)}, & \text{if } k = 2, \\
+0, & \text{if } k \geq 3.
+\end{cases}
+$$
+
+**3)** Let’s assume that $\theta_1 = \frac{5}{6}$ and $\theta_2 = \frac{1}{6}$:
+
+```{=tex}
+\begin{align*}
+\gamma_0 & = \frac{38}{36} \sigma^2, \\
+\gamma_1 & = \frac{-5}{36} \sigma^2, \\
+\gamma_2 & = \frac{-1}{6} \sigma^2.
+\end{align*}
+```
+So:
+
+```{=tex}
+\begin{align*}
+\tau_1 & = \frac{38 \sigma^2 \times \frac{-6}{\sigma^2} }{36} = \frac{-5}{6}, \\
+\tau_2 & = \frac{-5 \sigma^2 \times \frac{-6}{\sigma^2}}{36} = \frac{5}{6}.
+\end{align*}
+```
+Let’s assume that $\theta_1 = -1$ and $\theta_2 = 6$:
+
+```{=tex}
+\begin{align*}
+\gamma_0 & = 38 \sigma^2, \\
+\gamma_1 & = -5 \sigma^2, \\
+\gamma_2 & = -6 \sigma^2.
+\end{align*}
+```
+We get:
+
+```{=tex}
+\begin{align*}
+\tau_1 & = \frac{-5}{38}, \\
+\tau_2 & = \frac{-6}{38}.
+\end{align*}
+```
+## Empirical Exercises
