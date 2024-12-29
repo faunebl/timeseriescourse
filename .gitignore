@@ -144,3 +144,4 @@ dmypy.json
 #data
 **.csv
 **.mat
+**.xls
